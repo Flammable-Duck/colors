@@ -1,4 +1,5 @@
 import tables
+import parseopt
 
 const colors = to_ordered_table({"black": "\u001b[30m",
                                 "red": "\u001b[31m",
@@ -10,9 +11,20 @@ const colors = to_ordered_table({"black": "\u001b[30m",
                                 "white": "\u001b[37m",
                                 "reset": "\u001b[0m", })
 
+
+proc options(msg: string) =
+    var p = initOptParser()
+    for kind, key, val in p.getopt():
+        stdout.write(colors[val], msg, "\n")
+
+proc get_stdin(): string =
+    return stdin.readall
+
 proc main() =
-    for key, value in colors:
-        echo value, key
+    #options(get_stdin())
+    options(get_stdin())
+    #for key, value in colors:
+    #    echo value, key
     
 when isMainModule:
   main()
