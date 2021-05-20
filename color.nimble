@@ -11,3 +11,4 @@ bin           = @["color"]
 # Dependencies
 
 requires "nim >= 1.4.6"
+requires "argparse >= 2.0.0"
