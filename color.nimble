@@ -11,3 +11,4 @@ bin           = @["color"]
 # Dependencies
 
 requires "nim >= 1.4.6"
+requires "simple_parseopt >= 1.1.1"

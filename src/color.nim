@@ -1,5 +1,7 @@
 import tables
-import parseopt
+import simple_parseopt
+
+simple_parseopt.config: no_slash.dash_dash_parameters
 
 const colors = to_ordered_table({"black": "\u001b[30m",
                                 "red": "\u001b[31m",
@@ -11,20 +13,26 @@ const colors = to_ordered_table({"black": "\u001b[30m",
                                 "white": "\u001b[37m",
                                 "reset": "\u001b[0m", })
 
+let options = get_options:
+    c: string = "reset" {. info("The color of the text"), alias("color") .}
+    m: string = ""      {. info("The text (will use stdin if not supplied)"), alias("message") .}
 
-proc options(msg: string) =
-    var p = initOptParser()
-    for kind, key, val in p.getopt():
-        stdout.write(colors[val], msg, "\n")
 
-proc get_stdin(): string =
-    return stdin.readall
+proc color_stdin() =
+    if options.m != "":
+        echo(colors[options.c], options.m, colors["reset"])
+    else:
+        var line: TaintedString
+        while readLine(stdin, line):
+            echo(colors[options.c], line, colors["reset"])
+
+
+proc ctrlc() {.noconv.} =
+    system.quit()
+setControlCHook(ctrlc)
 
 proc main() =
-    #options(get_stdin())
-    options(get_stdin())
-    #for key, value in colors:
-    #    echo value, key
+    color_stdin()
     
 when isMainModule:
-  main()
+    main()
