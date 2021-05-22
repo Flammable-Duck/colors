@@ -14,8 +14,8 @@ const colors = to_ordered_table({"black": "\u001b[30m",
                                 "reset": "\u001b[0m", })
 
 let options = get_options:
-    c: string = "reset" {. info("The color of the text"), alias("color") .}
-    m: string = ""      {. info("The text (will use stdin if not supplied)"), alias("message") .}
+    c: string = "reset" {.info("The color of the text"), alias("color").}
+    m: string = "" {.info("The text (will use stdin if not supplied)"), alias("message").}
 
 
 proc color_stdin() =
@@ -33,6 +33,6 @@ setControlCHook(ctrlc)
 
 proc main() =
     color_stdin()
-    
+
 when isMainModule:
     main()
