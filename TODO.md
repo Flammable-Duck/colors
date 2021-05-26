@@ -2,4 +2,4 @@
 
 - rgb
 - background color
-- italics, bold, dim, underline, strikethrough
+- [Done] *italics*, **bold**, dim, underline, ~~strikethrough~~
