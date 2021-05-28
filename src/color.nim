@@ -1,4 +1,5 @@
 import tables
+import system
 import simple_parseopt
 
 simple_parseopt.config: no_slash.dash_dash_parameters
@@ -19,15 +20,32 @@ const colors = to_ordered_table({"black": "\u001b[30m",
                                 })
 
 let options = get_options:
-    c: string = "reset" {.info("The color of the text"), alias("color").}
+    c: string = "" {.info("The color of the text"), alias("color").}
     m: string = "" {.info("The text (will use stdin if not supplied)"), alias("message").}
     b: bool = false {.info("bold"), alias("bold").}
     i: bool = false {.info("italic"), alias("italic").}
     u: bool = false {.info("underline"), alias("underline").}
     s: bool = false {.info("strikethrough"), alias("strikethrough").}
+    rgb:seq[int] {. len(3), info("rgb color") .}
+
+proc rgb(r:int,g:int,b:int):string =
+    try:
+        if r > 255 or r < 0 or g > 255 or g < 0 or b > 255 or b < 0:
+            raise newException(ValueError, "Not a valid RGB value.")
+    except ValueError:
+        echo "Error: Not a valid RGB value."
+        quit(QuitFailure)
+
+    var code: string = "\u001b[38;2;" & $r & ";" & $g & ";" & $b & "m"
+    return code
 
 proc get_codes(): string =
     var codes:string
+    case len(options.rgb):
+        of 0:
+            discard
+        else:
+            codes.add(rgb(options.rgb[0], options.rgb[1], options.rgb[2] ))
     case options.c:
         of "":
             discard
