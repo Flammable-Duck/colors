@@ -29,15 +29,9 @@ let options = get_options:
     rgb:seq[int] {. len(3), info("rgb color") .}
 
 proc rgb(r:int,g:int,b:int):string =
-    try:
-        if r > 255 or r < 0 or g > 255 or g < 0 or b > 255 or b < 0:
-            raise newException(ValueError, "Not a valid RGB value.")
-    except ValueError:
-        echo "Error: Not a valid RGB value."
-        quit(QuitFailure)
-
-    var code: string = "\u001b[38;2;" & $r & ";" & $g & ";" & $b & "m"
-    return code
+    if r > 255 or r < 0 or g > 255 or g < 0 or b > 255 or b < 0:
+        raise newException(ValueError, "Not a valid RGB value.")
+    return "\u001b[38;2;" & $r & ";" & $g & ";" & $b & "m"
 
 proc get_codes(): string =
     var codes:string
@@ -46,10 +40,13 @@ proc get_codes(): string =
             discard
         else:
             codes.add(rgb(options.rgb[0], options.rgb[1], options.rgb[2] ))
-    case options.c:
-        of "":
-            discard
-        else:
+    case options.c in colors:
+        of false:
+            if options.c != "":
+                raise newException(ValueError, "Not a valid color option.")
+            else:
+                discard
+        of true:
             codes.add(colors[options.c])
     case options.b:
         of false:
@@ -90,4 +87,8 @@ proc main() =
     color_stdin(get_codes())
 
 when isMainModule:
-    main()
+    try:
+        main()
+    except:
+        echo getCurrentExceptionMsg()
+        quit(QuitFailure)
